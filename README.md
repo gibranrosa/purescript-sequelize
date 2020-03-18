@@ -119,10 +119,10 @@ userCols = ["name" /\ nameOpts, "age" /\ ageOpts]
   where
   nameOpts =
     columnType := ModelTypes.String {length: Nothing} <>
-    defaultValue := toForeign "me"
+    defaultValue := unsafeToForeign "me"
   ageOpts =
     columnType := ModelTypes.Integer {length: Nothing} <>
-    defaultValue := toForeign 20
+    defaultValue := unsafeToForeign 20
 ```
 
 Note the catch-all pattern match in the `isModelUser` instance: this is because

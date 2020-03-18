@@ -27,10 +27,10 @@ module Test.Where where
 
 import Test.Prelude
 
-main :: EffTest () Unit
+main :: EffTest Unit
 main = void $ launchAff testWhere
 
-testWhere :: AffTest () Unit
+testWhere :: AffTest Unit
 testWhere = do
   carModel <- getCarModel
   _ <- create carModel (Car {make: "Ford", model: "T", hp: 20})

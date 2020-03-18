@@ -27,7 +27,7 @@ module Test.Query where
 
 import Test.Prelude
 
-import Control.Monad.Aff (attempt)
+import Effect.Aff (attempt)
 
 z4 :: Car
 z4 = Car {make: "BMW", model: "Z4", hp: 335}
@@ -38,10 +38,10 @@ m4 = Car {make: "BMW", model: "M4", hp: 444}
 m6 :: Car
 m6 = Car {make: "BMW", model: "M6", hp: 600}
 
-main :: EffTest () Unit
+main :: EffTest Unit
 main = void $ launchAff do
   carModel <- getCarModel
-  bulkCreate carModel [z4, m4, m6]
+  _ <- bulkCreate carModel [z4, m4, m6]
   findByIdTest carModel
   findOneTest carModel
   findOrCreateTest carModel
@@ -52,7 +52,7 @@ main = void $ launchAff do
   maxMissingTest carModel
   minTest carModel
 
-findByIdTest :: ModelOf Car -> AffTest () Unit
+findByIdTest :: ModelOf Car -> AffTest Unit
 findByIdTest carModel = do
   maybeZ4 :: Maybe (Instance Car) <- findById carModel (Right 1)
   maybeM4 <- findByIntId carModel 2
@@ -60,20 +60,20 @@ findByIdTest carModel = do
   let cars = traverse instanceToModelE $ catMaybes [maybeZ4, maybeM4, maybeM6]
   either logShow logShow cars
 
-findOneTest :: ModelOf Car -> AffTest () Unit
+findOneTest :: ModelOf Car -> AffTest Unit
 findOneTest carModel = do
   maybeZ4 :: Maybe (Instance Car) <- findOne carModel $ where_ := WHERE ["model" /\ String "Z4"]
   case maybeZ4 of
     Just reallyZ4 -> either logShow logShow $ instanceToModelE reallyZ4
     _ -> log "Error: either bad findOne query or unpopulated database"
 
-findOrCreateTest :: ModelOf Car -> AffTest () Unit
+findOrCreateTest :: ModelOf Car -> AffTest Unit
 findOrCreateTest carModel = do
   {inst} <- findOrCreate carModel $
     where_ := WHERE ["model" /\ String "M4"]
   either logShow logShow $ instanceToModelE (inst :: Instance Car)
 
-findAndCountAllTest :: ModelOf Car -> AffTest () Unit
+findAndCountAllTest :: ModelOf Car -> AffTest Unit
 findAndCountAllTest carModel = do
   {count} <- findAndCountAll carModel $ where_ := whereCar
   logShow count -- should be 3
@@ -81,28 +81,28 @@ findAndCountAllTest carModel = do
     whereCar :: WHERE Car
     whereCar = WHERE ["make" /\ String "BMW"]
 
-countTest :: ModelOf Car -> AffTest () Unit
+countTest :: ModelOf Car -> AffTest Unit
 countTest carModel = do
   n <- count carModel $
     where_ := ("hp" >=? Int 400)
   logShow n -- should be 2
 
-findAllTest :: ModelOf Car -> AffTest () Unit
+findAllTest :: ModelOf Car -> AffTest Unit
 findAllTest carModel = do
   arr :: Array (Instance Car) <- findAll carModel mempty
   either logShow logShow $ traverse instanceToModelE arr
 
-maxTest :: ModelOf Car -> AffTest () Unit
+maxTest :: ModelOf Car -> AffTest Unit
 maxTest carModel = do
   count <- max carModel mempty "hp"
   logShow count -- should be 600
 
-minTest :: ModelOf Car -> AffTest () Unit
+minTest :: ModelOf Car -> AffTest Unit
 minTest carModel = do
   count <- min carModel mempty "hp"
   logShow count -- should be 335
 
-maxMissingTest :: ModelOf Car -> AffTest () Unit
+maxMissingTest :: ModelOf Car -> AffTest Unit
 maxMissingTest carModel = do
   n <- attempt $ max carModel mempty "propertyDoesNotExist"
   log "It succeeds if it prints a Left value to console"

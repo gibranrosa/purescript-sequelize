@@ -42,11 +42,11 @@ import Data.Either (Either, either)
 import Foreign (Foreign, unsafeToForeign)
 import Data.Functor.Contravariant ((>$<))
 import Data.Options (Option, opt)
-import Sequelize.Models.Types (DataType, sqzDataTypetoForeign)
+import Sequelize.Models.Types (DataType, sqzDataTypeunsafeToForeign)
 import Sequelize.Types (ColumnOpts)
 
 columnType :: forall a. Option (ColumnOpts a) DataType
-columnType = sqzDataTypetoForeign >$< opt "type"
+columnType = sqzDataTypeunsafeToForeign >$< opt "type"
 
 allowNull :: forall a. Option (ColumnOpts a) Boolean
 allowNull = opt "allowNull"

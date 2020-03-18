@@ -27,9 +27,10 @@ module Test.Free where
 
 import Test.Prelude
 
-import Data.Foreign (toForeign)
+import Foreign (unsafeToForeign)
 import Data.Options (Options(..))
-import Data.StrMap as Map
+-- import Data.StrMap as Map
+import Data.Map as Map
 import Data.String (singleton)
 import Data.Tuple (Tuple(..))
 import Sequelize.Free as SQL
@@ -61,8 +62,8 @@ defiant
   }
 
 updateOpts = Options
-  [ "model" /\ (toForeign "Defiant")
-  , "hp" /\ (toForeign 100000) ]
+  [ "model" /\ (unsafeToForeign "Defiant")
+  , "hp" /\ (unsafeToForeign 100000) ]
 
 
 spaceships :: Array Car
@@ -90,7 +91,7 @@ testR3 = do
   i <- SQL.findByInt 900
   pure case i of
     Just inst -> peek inst "propertyDoesNotExist"
-    _ -> pure $ toForeign unit
+    _ -> pure $ unsafeToForeign unit
 
 testU1 :: App Unit
 testU1 = do

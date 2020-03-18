@@ -33,7 +33,7 @@ audi = Car {make: "Audi", model: "Audi Q7", hp: 333}
 honda :: Car
 honda = Car {make: "Honda", model: "Civic", hp: 306}
 
-main :: EffTest () Unit
+main :: EffTest Unit
 main = void $ launchAff do
   carModel <- getCarModel
   let a = build carModel audi

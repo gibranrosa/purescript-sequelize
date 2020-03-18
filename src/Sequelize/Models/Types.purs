@@ -65,7 +65,7 @@ module Sequelize.Models.Types
   , Length(..)
   , PositiveInt(..)
   , mkPositiveInt
-  , sqzDataTypetoForeign
+  , sqzDataTypeunsafeToForeign
   ) where
 
 import Prelude
@@ -190,8 +190,8 @@ foreign import _GEOGRAPHY :: Foreign
 foreign import _VIRTUAL   :: Foreign
 foreign import _ENUM      :: Fn1 (Array String) Foreign
 
-sqzDataTypetoForeign :: DataType -> Foreign
-sqzDataTypetoForeign = case _ of
+sqzDataTypeunsafeToForeign :: DataType -> Foreign
+sqzDataTypeunsafeToForeign = case _ of
   String {length}            -> _STRING $ maybe 255 unwrap length
   Char {length}              -> _CHAR $ maybe 255 unwrap length
   Text length                -> _TEXT $ encodeLength length
@@ -223,7 +223,7 @@ sqzDataTypetoForeign = case _ of
   HStore                     -> _HSTORE
   Json                       -> _JSON
   JsonB                      -> _JSONB
-  Array dt                   -> _ARRAY $ sqzDataTypetoForeign dt
+  Array dt                   -> _ARRAY $ sqzDataTypeunsafeToForeign dt
   Range                      -> _RANGE
   Geometry                   -> _GEOMETRY
   Geography                  -> _GEOGRAPHY

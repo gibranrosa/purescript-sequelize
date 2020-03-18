@@ -65,7 +65,7 @@ makeModelOf
   -> Aff (ModelOf a)
 makeModelOf conn opts =
   let opts' = options opts
-      columns = fromFoldable $ map (rmap options) $ modelCols :: ModelCols a
+      columns = fromFoldable $ map (rmap options) $ (modelCols :: ModelCols a)
       name = modelName (Proxy :: Proxy a)
    in liftEffect $ runFn4 _makeModel conn name columns opts'
 

@@ -29,8 +29,9 @@ import Data.Options
 import Test.Prelude
 
 import Control.Monad.Trampoline (done)
-import Data.Foreign (toForeign)
-import Data.StrMap as Map
+import Foreign (unsafeToForeign)
+--import Data.StrMap as Map
+import Data.Map as Map
 import Data.Tuple (Tuple(..))
 
 audi :: Car
@@ -60,21 +61,21 @@ main = void $ launchAff do
 
   updateModelTest carModel
 
-createTest :: ModelOf Car -> AffTest () (Instance Car)
+createTest :: ModelOf Car -> AffTest (Instance Car)
 createTest carModel = create carModel honda
 
-buildAndSaveTest :: ModelOf Car -> AffTest () (Instance Car)
+buildAndSaveTest :: ModelOf Car -> AffTest (Instance Car)
 buildAndSaveTest carModel = do
   let audiInstance = build carModel audi
   save audiInstance
 
-updateTest :: Instance Car -> AffTest () Unit
+updateTest :: Instance Car -> AffTest Unit
 updateTest audiInstance = update audiInstance honda
 
-destroyTest :: Instance Car -> AffTest () Unit
+destroyTest :: Instance Car -> AffTest Unit
 destroyTest = destroy
 
-deleteTest :: ModelOf Car -> AffTest () Unit
+deleteTest :: ModelOf Car -> AffTest Unit
 deleteTest carModel = do
   x <- delete carModel (where_ := WHERE ["make" /\ String "Honda"])
   logShow x.affectedCount
@@ -82,16 +83,16 @@ deleteTest carModel = do
     0 -> "No record found"
     _ -> "Deleted " <> show x.affectedCount <> " records."
 
-incrementTest :: Instance Car -> AffTest () Unit
+incrementTest :: Instance Car -> AffTest Unit
 incrementTest inst = increment inst $ Map.fromFoldable [Tuple "hp" 15]
 
-decrementTest :: Instance Car -> AffTest () Unit
+decrementTest :: Instance Car -> AffTest Unit
 decrementTest inst = decrement inst $ Map.fromFoldable [Tuple "hp" 10]
 
-bulkCreateTest :: ModelOf Car -> AffTest () Unit
+bulkCreateTest :: ModelOf Car -> AffTest Unit
 bulkCreateTest carModel = bulkCreate carModel [audi, honda]
 
-updateModelTest :: ModelOf Car -> AffTest () Unit
+updateModelTest :: ModelOf Car -> AffTest Unit
 updateModelTest carModel = do
   x <- updateModel carModel updateOpts opts
   logShow x.affectedCount
@@ -100,4 +101,4 @@ updateModelTest carModel = do
     _ -> "This shouldn't log since we're testing with SQLite!"
   where
     opts = where_ := WHERE ["make" /\ String "Honda"]
-    updateOpts = Options [ "model" /\ (toForeign "testModel") ]
+    updateOpts = Options [ "model" /\ (unsafeToForeign "testModel") ]

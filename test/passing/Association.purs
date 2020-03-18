@@ -27,10 +27,10 @@ module Test.Association where
 
 import Test.Prelude
 
-main :: EffTest () Unit
+main :: EffTest Unit
 main = void $ launchAff associationTest
-
-associationTest :: AffTest () Unit
+id x = x
+associationTest :: AffTest Unit
 associationTest = do
   {company, user} <- getUserAndCompany
   c1 <- create company $ Company {name: "ACME Co"}

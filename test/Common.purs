@@ -27,9 +27,9 @@ module Test.Common where
 
 import Prelude
 
-import Control.Monad.Aff (Aff)
-import Data.Foreign (toForeign)
-import Data.Foreign.Class (class Decode, class Encode)
+import Effect.Aff (Aff)
+import Foreign (unsafeToForeign)
+import Foreign.Generic (class Decode, class Encode)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.Maybe (Maybe(..))
@@ -41,7 +41,7 @@ import Sequelize.Connection (Dialect(..), database, dialect, getConn, storage, s
 import Sequelize.Models (belongsTo, hasOne, makeModelOf)
 import Sequelize.Models.Columns (columnType, defaultValue)
 import Sequelize.Models.Types (DataType(..)) as ModelTypes
-import Sequelize.Types (Alias(..), Conn, ModelCols, ModelOf, SEQUELIZE, defaultSyncOpts)
+import Sequelize.Types (Alias(..), Conn, ModelCols, ModelOf, defaultSyncOpts)
 
 newtype Car = Car { model :: String, make :: String, hp :: Int }
 derive instance genericCar :: Generic Car _
@@ -66,7 +66,7 @@ getCarCols = ["model" /\ modelOpts, "make" /\ makeOpts, "hp" /\ hpOpts]
     makeOpts = columnType := ModelTypes.String {length: Nothing}
     hpOpts = columnType := ModelTypes.Integer {length: Nothing}
 
-getCarModel :: forall e. Aff (sequelize :: SEQUELIZE | e) (ModelOf Car)
+getCarModel :: Aff (ModelOf Car) --(sequelize :: SEQUELIZE | e) (ModelOf Car)
 getCarModel = do
   conn <- myConn
   car <- makeModelOf conn mempty
@@ -94,7 +94,7 @@ getCompanyCols = ["name" /\ nameOpts]
   where
   nameOpts =
     columnType := ModelTypes.String {length: Nothing} <>
-    defaultValue := toForeign "ACME Co"
+    defaultValue := unsafeToForeign "ACME Co"
 
 newtype User = User { name :: String }
 derive instance eqUser :: Eq User
@@ -117,7 +117,7 @@ userCols = ["name" /\ nameOpts]
   where
   nameOpts =
     columnType := ModelTypes.String {length: Nothing} <>
-    defaultValue := toForeign "me"
+    defaultValue := unsafeToForeign "me"
 
 newtype SuperUser = SuperUser { name :: String, employerId :: Int }
 derive instance eqSuperUser :: Eq SuperUser
@@ -140,12 +140,12 @@ superUserCols = ["name" /\ nameOpts]
   where
   nameOpts =
     columnType := ModelTypes.String {length: Nothing} <>
-    defaultValue := toForeign "me"
+    defaultValue := unsafeToForeign "me"
 
-instance userSubSuper :: Submodel User SuperUser where
-  project (SuperUser {name}) = User {name}
+--instance userSubSuper :: Submodel User SuperUser where
+  --project (SuperUser {name}) = User {name}
 
-myConn :: forall e. Aff (sequelize :: SEQUELIZE | e) Conn
+myConn :: Aff Conn --(sequelize :: SEQUELIZE | e) Conn
 myConn = getConn opts
   where
     opts = database := "thunder"
@@ -155,7 +155,7 @@ myConn = getConn opts
 getUserAndCompany
   :: forall e
    .
-  Aff ( sequelize :: SEQUELIZE | e )
+  Aff --( sequelize :: SEQUELIZE | e )
     { company :: ModelOf Company
     , user :: ModelOf User
     }
