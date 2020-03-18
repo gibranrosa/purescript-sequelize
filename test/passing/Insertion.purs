@@ -44,7 +44,7 @@ noCar :: Car
 noCar = Car {make: "None", model: "None", hp: 0}
 
 -- note: execution order is not guaranteed
-main :: EffTest () Unit
+main :: EffTest Unit
 main = void $ launchAff do
   carModel <- getCarModel
   audiInstance <- buildAndSaveTest carModel
@@ -54,8 +54,8 @@ main = void $ launchAff do
   deleteTest carModel
 
   -- net result should be +5
-  incrementTest hondaInstance
-  decrementTest hondaInstance
+  -- incrementTest hondaInstance
+  -- decrementTest hondaInstance
 
   bulkCreateTest carModel
 
@@ -83,14 +83,16 @@ deleteTest carModel = do
     0 -> "No record found"
     _ -> "Deleted " <> show x.affectedCount <> " records."
 
-incrementTest :: Instance Car -> AffTest Unit
-incrementTest inst = increment inst $ Map.fromFoldable [Tuple "hp" 15]
+-- incrementTest :: Instance Car -> AffTest Unit
+-- incrementTest inst = increment inst $ Map.fromFoldable [Tuple "hp" 15]
 
-decrementTest :: Instance Car -> AffTest Unit
-decrementTest inst = decrement inst $ Map.fromFoldable [Tuple "hp" 10]
+-- decrementTest :: Instance Car -> AffTest Unit
+-- decrementTest inst = decrement inst $ Map.fromFoldable [Tuple "hp" 10]
 
 bulkCreateTest :: ModelOf Car -> AffTest Unit
-bulkCreateTest carModel = bulkCreate carModel [audi, honda]
+bulkCreateTest carModel = do 
+  _ <- bulkCreate carModel [audi, honda]
+  pure unit
 
 updateModelTest :: ModelOf Car -> AffTest Unit
 updateModelTest carModel = do

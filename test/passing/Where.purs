@@ -25,7 +25,10 @@
 
 module Test.Where where
 
+import Sequelize.Class
 import Test.Prelude
+
+import Prelude (identity)
 
 main :: EffTest Unit
 main = void $ launchAff testWhere

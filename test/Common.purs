@@ -33,10 +33,10 @@ import Foreign.Generic (class Decode, class Encode)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.Maybe (Maybe(..))
-import Data.Monoid (mempty)
+--import Data.Monoid (mempty)
 import Data.Options ((:=))
 import Data.Tuple.Nested ((/\))
-import Sequelize.Class (class EncodeModel, class DecodeModel, class Model, class Submodel, genericEncodeModel, genericDecodeModel)
+import Sequelize.Class (class EncodeModel, class DecodeModel, class Model, class Submodel, genericEncodeModel, genericDecodeModel) 
 import Sequelize.Connection (Dialect(..), database, dialect, getConn, storage, syncConn)
 import Sequelize.Models (belongsTo, hasOne, makeModelOf)
 import Sequelize.Models.Columns (columnType, defaultValue)
@@ -142,8 +142,15 @@ superUserCols = ["name" /\ nameOpts]
     columnType := ModelTypes.String {length: Nothing} <>
     defaultValue := unsafeToForeign "me"
 
---instance userSubSuper :: Submodel User SuperUser where
-  --project (SuperUser {name}) = User {name}
+instance userSubSuper :: Submodel User SuperUser where
+  project (SuperUser {name}) = User {name}
+
+instance idCarSubmodel :: Submodel Car Car where
+  project = identity
+
+instance idCompanySubmodel :: Submodel Company Company where
+  project = identity
+
 
 myConn :: Aff Conn --(sequelize :: SEQUELIZE | e) Conn
 myConn = getConn opts

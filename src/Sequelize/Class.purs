@@ -62,8 +62,8 @@ class (EncodeModel m, DecodeModel m) <= Model m where
 class (Model m, Model n) <= Submodel m n where
   project :: n -> m
 
-instance idSubmodel :: Model m => Submodel m m where
-  project = identity
+-- instance idSubmodel :: Model m => Submodel m m where
+--   project = identity
 
 -- | Not provided as an instance because it's too easy for the compiler to
 -- | complain about infinite loops

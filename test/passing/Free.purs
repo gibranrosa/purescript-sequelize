@@ -31,7 +31,7 @@ import Foreign (unsafeToForeign)
 import Data.Options (Options(..))
 -- import Data.StrMap as Map
 import Data.Map as Map
-import Data.String (singleton)
+import Data.String.CodeUnits (singleton)
 import Data.Tuple (Tuple(..))
 import Sequelize.Free as SQL
 
@@ -93,10 +93,10 @@ testR3 = do
     Just inst -> peek inst "propertyDoesNotExist"
     _ -> pure $ unsafeToForeign unit
 
-testU1 :: App Unit
-testU1 = do
-  i <- SQL.create $ enterprise 'F'
-  SQL.increment i (Map.singleton "hp" 1000000)
+-- testU1 :: App Unit
+-- testU1 = do
+--   i <- SQL.create $ enterprise 'F'
+--   SQL.increment i (Map.singleton "hp" 1000000)
 
 testU2 :: App Unit
 testU2 = void $ -- changes voyager to the defiant
@@ -113,11 +113,11 @@ testCRUD = do
   void testR1
   void testR2
   void testR3
-  testU1
+  -- testU1
   testU2
   testD
 
-main :: EffTest () Unit
+main :: EffTest Unit
 main = void $ launchAff do
   m <- getCarModel
   SQL.runCRUD m testCRUD

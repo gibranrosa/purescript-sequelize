@@ -35,7 +35,7 @@ import Test.Query as Query
 import Test.Where as Where
 import Test.Free as Free
 
-main :: EffTest () Unit
+main :: EffTest Unit
 main = do
   Association.main
   Connection.main
