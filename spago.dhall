@@ -14,11 +14,11 @@ You can edit this file as you like.
   , "debug"
   , "effect"
   , "exceptions"
-  , "free"
+  , "foreign"
   , "foreign-generic"
+  , "free"
   , "generics-rep"
   , "options"
-  , "ordered-collections"
   , "prelude"
   , "psci-support"
   ]
